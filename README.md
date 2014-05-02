@@ -1,4 +1,4 @@
-ducking-octo-spice
+moni.to.r
 ==================
 
-Moni Technologies Ltd Hipchat Bot
+An integration service supporting development at Moni Technologies Ltd
