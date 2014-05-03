@@ -3,17 +3,78 @@ var crypto = require('crypto');
 var EventEmitter = require('events').EventEmitter
 var comms = require('./../events.js');
 var util = require('util');
+var http = require('http');
+var https = require('https');
+var querystring = require('querystring');
 
 var router = new express.Router();
 
 var logger;
+var tokens;
 
 function gh() {
 
     EventEmitter.call(this);
 
     this.subscribe = function(emitter) {
+        var self = this;
 
+        var descriptions = {
+            'pending': 'Build in progress',
+            'success': 'Build successful',
+            'error': 'Build did not complete',
+            'failure': 'Build failed'
+        }
+
+        var notifyGH = function(buildEvent){
+
+            logger.debug('Notifying github, status: %s', buildEvent.status);
+
+            var postData = JSON.stringify({
+                'state': buildEvent.status,
+                'description': descriptions[buildEvent.status],
+                'target_url': 'http://detail.com',
+                'context': 'moni.to.r'
+            })
+
+            var options = {
+                host: 'api.github.com',
+                port: 443,
+                path: '/repos/'+buildEvent.repository.name+'/statuses/'+buildEvent.commit.id,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': postData.length,
+                    'User-Agent': 'moni.to.r',
+                    'Accept': 'application/vnd.github.she-hulk-preview+json'
+                },
+                auth: tokens.status+':x-oauth-basic',
+                strictSSL: false
+            };
+
+            var post = https.request(options, function(res){
+                var responseData = '';
+                res.on('data', function(data) {
+                    responseData += data;
+                });
+
+                res.on('end', function(){
+                    logger.silly(JSON.parse(responseData));
+                })
+            });
+
+            post.on('error', function(e) {
+                logger.error(e);
+            });
+
+            post.write(postData);
+            post.end();
+
+        };
+
+        emitter.on(comms.events.BUILD_STARTED, notifyGH);
+
+        emitter.on(comms.events.BUILD_FINISHED, notifyGH);
     }
 
     this.attach = function(server) {
@@ -99,14 +160,35 @@ router.post('/api/github/v1', function(command, body) {
                     body.head_commit.timestamp
                 ),
                 new comms.model.author(body.head_commit.author.name, body.head_commit.author.email, body.head_commit.author.username),
-                new comms.model.repository(body.repository.name, body.repository.url, body.repository.master_branch, body.repository.description),
+                new comms.model.repository(
+                    body.repository.owner.name+'/'+body.repository.name,
+                    body.repository.url,
+                    body.repository.master_branch,
+                    body.repository.description
+                ),
                 {view: body.head_commit.url}
             )];
             logger.debug('Processing PUSH')
             break;
+        case 'pull_request':
+            event = [comms.events.PULL_REQUEST, new comms.model.prEvent(
+                new comms.model.commit(
+                    body.pull_request.base.sha,
+                    null,
+                    null
+                ),
+                new comms.model.commit(
+                    body.pull_request.head.sha,
+                    null,
+                    null
+                ),
+                new comms.model.repository(body.repository.full_name, body.repository.url, body.repository.default_branch, body.repository.description),
+                {view: body.pull_request.url}
+            )];
+            logger.debug('Processing PR');
+            break;
         default:
             logger.debug('Unknown command %s', command);
-            console.log(body);
             return;
     }
 
@@ -116,7 +198,8 @@ router.post('/api/github/v1', function(command, body) {
 
 });
 
-module.exports = function(passedLogger) {
+module.exports = function(passedTokens, passedLogger) {
+    tokens = passedTokens;
     logger = passedLogger;
     return new gh();
 };

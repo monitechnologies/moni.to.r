@@ -35,6 +35,21 @@ function monitor(logger) {
             this.emit(events.COMMIT, payload);
         }).bind(this)); //simply re-emitting commit event
 
+        emitter.on(events.PULL_REQUEST, (function(payload) {
+            logger.debug('Received PULL_REQUEST, forwarding.');
+            this.emit(events.PULL_REQUEST, payload);
+        }).bind(this)); //simply re-emitting commit event
+
+        emitter.on(events.BUILD_STARTED, (function(payload) {
+            logger.debug('Received BUILD_STARTED, forwarding.');
+            this.emit(events.BUILD_STARTED, payload);
+        }).bind(this)); //simply re-emitting commit event
+
+        emitter.on(events.BUILD_FINISHED, (function(payload) {
+            logger.debug('Received BUILD_FINISHED, forwarding.');
+            this.emit(events.BUILD_FINISHED, payload);
+        }).bind(this)); //simply re-emitting commit event
+
     }
 
     this.registerAdapter = function(adapter) {
