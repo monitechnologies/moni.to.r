@@ -2,30 +2,32 @@ var wobot = require('wobot').Bot;
 var EventEmitter = require('events').EventEmitter;
 var utils = require('util');
 var http = require('http');
-var comms = require('./../events.js');
+var comms = require('./events.js');
 
 var logger;
 
-var bot = function(config) {
-    EventEmitter.call(this);
+var name;
 
-    var rooms = this.rooms = [];
+var bot = function(config, rooms) {
+    EventEmitter.call(this);
 
     this.bot = new wobot(config);
     this.bot.connect();
 
     this.bot.onConnect(function(){
         logger.info('Connected to HipChat');
-        this.join('89450_devops@conf.hipchat.com');
-        rooms.push('89450_devops@conf.hipchat.com');
-        logger.info('Joined DevOps');
-        this.message()
+
+        rooms.forEach((function(room){
+            if(!room.enabled) return;
+            this.join(room['id']+'@conf.hipchat.com');
+            logger.info('Joined '+room['label']);
+        }).bind(this));
 
     });
 
-    this.subscribe = function(){};
-
-    this.attach = function(){};
+    this.bot.onMessage('!cash', function(channel, from, message) {
+        this.message(channel, name);
+    });
 
     this.bot.onMessage('!chuck', function(channel, from, message) {
 
@@ -67,10 +69,11 @@ var bot = function(config) {
 
 utils.inherits(bot, EventEmitter);
 
-module.exports = function(username, password, passedLogger) {
+module.exports = function(username, password, rooms, passedLogger) {
+    name = 'CashPot v1.0 - Moni Hipchat Bot ('+username+'@chat.hipchat.com/bot)';
     logger = passedLogger;
     return new bot({
         jid: username+'@chat.hipchat.com/bot',
         password: password
-    });
+    }, rooms);
 };

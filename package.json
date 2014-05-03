@@ -1,7 +1,13 @@
 {
-    "name": "moni.to.r",
-    "version": "0.0.1",
-    "dependencies": {
-        "express": "3.x"
-    }
+  "name": "moni.to.r",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "3.x",
+    "winston": "*",
+    "wobot": "*"
+  },
+  "devDependencies": {
+    "gulp-nodemon": "*",
+    "gulp": "^3.6.2"
+  }
 }
