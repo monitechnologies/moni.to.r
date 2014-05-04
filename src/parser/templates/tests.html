@@ -1,0 +1,36 @@
+<table class="table table-striped table-bordered table-hover table-condensed">
+    <tr><th>Test</th><th>Status</th><th>Time (ms)</th><th>Details</th></tr>
+    <tbody>
+        {{#each files}}
+        <tr>
+            <th scope="rowgroup" colspan="5" class="{{cssClass}}">{{name}}</th>
+        </tr>{{#each tests}}
+        <tr class="{{cssClass}}"><td style="padding-left:5em">{{test}}</td><td>{{status}}</td><td>{{time}}</td><td>
+            {{#if failure}}<button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#{{hash}}">details</button>
+            <div id="{{hash}}" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Test failed</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p><b>Message:</b><br />{{message}}</p>
+                            <p><b>Trace:</b><br />
+                            {{#each trace}}
+                                {{file}}:{{line}}<br>
+                            {{/each}}
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/if}}
+            </td>
+        </tr>{{/each}}
+        {{/each}}
+    </tbody>
+</table>
