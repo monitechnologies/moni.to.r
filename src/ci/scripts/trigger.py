@@ -10,9 +10,11 @@ args = function_parser.parser.parse_args()
 for case in class_case.switch(args.function):
         if case('build'):
                 print("Starting Task Sequence for: {}".format(args.function))
+		import build
                 break
         if case('integrate'):
                 print("Starting Task Sequence for: {}".format(args.function))
+		import integrate
                 break
         if True:
                 print "Valid functions are: build,integrate"
