@@ -1,2 +1,2 @@
-#!/usr/bin/python
-print "this message is from build.py"
+#!/usr/local/bin/python3.3-32
+print ("this message is from build.py")

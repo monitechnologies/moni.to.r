@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python3.3-32
 class switch(object):
     def __init__(self, value):
         self.value = value

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python3.3-32
 #Import required modules
 import class_case
 import function_parser
@@ -8,14 +8,14 @@ import sys
 args = function_parser.parser.parse_args()
 
 for case in class_case.switch(args.function):
-        if case('build'):
-                print("Starting Task Sequence for: {}".format(args.function))
-		import build
-                break
-        if case('integrate'):
-                print("Starting Task Sequence for: {}".format(args.function))
-		import integrate
-                break
-        if True:
-                print "Valid functions are: build,integrate"
-                sys.exit()
+  if case('build'):
+    print("Starting Task Sequence for: {}".format(args.function))
+    import build
+    break
+  if case('integrate'):
+    print("Starting Task Sequence for: {}".format(args.function))
+    import integrate
+    break
+  if True:
+    print ("Valid functions are: build,integrate")
+    sys.exit()
