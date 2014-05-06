@@ -55,6 +55,32 @@ var bot = function(config, rooms) {
         return true;
     });
 
+    this.bot.onMessage('!pugbomb', function(channel, from, message) {
+
+        logger.info('Received pug request');
+
+        var self = this;
+
+        var options = {
+            host: 'pugme.herokuapp.com',
+            port: 80,
+            path: '/random'
+        };
+
+        http.get(options, function(res) {
+            var data = '';
+            res.on('data', function(chunk) {
+                data += chunk;
+            });
+            res.on('end', function(chunk) {
+                data = JSON.parse(data);
+                self.message(channel, data.pug);
+            });
+        });
+
+        return true;
+    });
+
     this.bot.onMessage(/\!build [^\s]+\s[^\s]+/, function(channel, from, message) {
 
         var matches = message.match(/\!build ([^\s]+)\s([^\s]+)/);
