@@ -3,6 +3,7 @@ var EventEmitter = require('events').EventEmitter;
 var utils = require('util');
 var http = require('http');
 var comms = require('./events.js');
+var querystring = require('querystring');
 
 var logger;
 
@@ -74,7 +75,46 @@ var bot = function(config, rooms) {
             });
             res.on('end', function(chunk) {
                 data = JSON.parse(data);
+		/*self.message(channel, 'Mi sorry, no puggy!');*/
                 self.message(channel, data.pug);
+            });
+        });
+
+        return true;
+    });
+
+    this.bot.onMessage('!weather', function(channel, from, message) {
+
+        logger.info('Received weather request');
+
+        var self = this;
+
+        var options = {
+            host: 'api.openweathermap.org',
+            port: 80,
+            path: '/data/2.5/weather?'+querystring.stringify({'lat': 51.520625, 'lon': -0.052201, 'units': 'metric'}),
+        };
+
+        http.get(options, function(res) {
+            var data = '';
+            res.on('data', function(chunk) {
+                data += chunk;
+            });
+            res.on('end', function(chunk) {
+                data = JSON.parse(data);
+
+                var message = "Temperature: "+data.main.temp+"°C (Min: "+data.main.temp_min+" / Max: "+data.main.temp_max+")\n";
+                message += "Humidity: "+data.main.humidity+"%\n";
+                var conditions = [];
+
+                data.weather.forEach(function(weather){
+                    conditions.push(weather.main+' ('+weather.description+')');
+                });
+
+                message += "Conditions: "+conditions.join(' -> ')+"\n";
+
+                self.message(channel, message);
+
             });
         });
 

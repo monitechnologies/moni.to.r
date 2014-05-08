@@ -6,7 +6,8 @@
     "winston": "*",
     "wobot": "*",
     "commander": "*",
-    "handlebars": "*"
+    "handlebars": "*",
+    "mongoose": "*"
   },
   "bin": { "moni.to.r": "./bin/monitor.js" },
   "devDependencies": {

@@ -24,6 +24,8 @@ exports.parse = parse = function(jsonString) {
 
     //console.log('<pre>', data);process.exit();
 
+    var testsss = [];
+
     data.forEach(function(testEvent){
         if(testEvent.event == 'test') {
 
@@ -95,6 +97,7 @@ exports.parse = parse = function(jsonString) {
 
             var testDesc = {
                 time: ms+'ms',
+                timeRaw: testEvent.time,
                 status: testEvent.status,
                 test: parts[1],
                 trace: testEvent.trace,
@@ -111,6 +114,8 @@ exports.parse = parse = function(jsonString) {
             testDesc.hash = shasum.digest('hex');
 
             testFile.tests.push(testDesc);
+
+            testsss.push(testDesc);
         }
     });
 
@@ -144,6 +149,13 @@ exports.parse = parse = function(jsonString) {
         });
     })
 
+    testsss.sort(function(a, b) {
+        if(a.timeRaw == b.timeRaw) return 0;
+
+        return a.timeRaw > b.timeRaw ? -1 : 1;
+    })
+
+    console.log(testsss);
 
     fs.readFile(__dirname+'/templates/tests.html', 'utf8', function (err,data) {
         if (err) {
