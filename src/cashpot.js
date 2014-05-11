@@ -75,7 +75,32 @@ var bot = function(config, rooms) {
             });
             res.on('end', function(chunk) {
                 data = JSON.parse(data);
-		/*self.message(channel, 'Mi sorry, no puggy!');*/
+                self.message(channel, data.pug);
+            });
+        });
+
+        return true;
+    });
+
+    this.bot.onMessage('!charles', function(channel, from, message) {
+
+        logger.info('Received charles request');
+
+        var self = this;
+
+        var options = {
+            host: '54.187.82.33',
+            port: 16217,
+            path: '/random'
+        };
+
+        http.get(options, function(res) {
+            var data = '';
+            res.on('data', function(chunk) {
+                data += chunk;
+            });
+            res.on('end', function(chunk) {
+                data = JSON.parse(data);
                 self.message(channel, data.pug);
             });
         });
