@@ -1,0 +1,46 @@
+{
+    "server": {
+        "port": 8080,
+        "timeout": 5000
+    },
+    "cash": {
+        "username": "",
+        "password": "",
+        "rooms": [
+            {"enabled": true, "id": "89450_devops", "label": "Devops"},
+            {"enabled": true, "id": "89450_devteam", "label": "Development"}
+        ],
+        "extra": {
+            "weather": {
+                "lat": 51.520625,
+                "lon": -0.052201
+            }
+        }
+    },
+    "github": {
+        "tokens": {
+            "status": ""
+        }
+    },
+    "hipchat": {
+        "token": "",
+        "rooms": [
+            423275
+        ]
+    },
+    "logger": {
+        "colors": {
+            "debug": "yellow",
+            "info": "grey",
+            "warn": "magenta"
+        },
+        "transports": {
+            "console": {
+                "level": "silly",
+                "prettyPrint": true,
+                "colorize": true,
+                "timestamp": false
+            }
+        }
+    }
+}
